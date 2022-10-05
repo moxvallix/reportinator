@@ -1,0 +1,87 @@
+# frozen_string_literal: true
+
+TYPES = [
+  {input: ":symbol", output: :symbol, type: "symbol"},
+  {input: "&Reportinator", output: Reportinator, type: "constant"},
+  {input: "!i 100", output: 100, type: "integer"},
+  {input: "!a !i 50, 50", output: 100, type: "addition"},
+  {input: "!d 1970-01-01", output: Time.parse("1970-01-01"), type: "date"},
+  {input: "!r !i 1, !i 100", output: (1..100), type: "integer range"},
+  {input: "!r a, z", output: ("a".."z"), type: "string range"},
+  {
+    input: "!r !d 1970-01-01, !d 1980-01-01",
+    output: (Time.parse("1970-01-01")..Time.parse("1980-01-01")),
+    type: "date range"
+  },
+  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}}
+]
+
+REPORTS = [
+  {template: "standard/test_001", output: [["string", :symbol]]},
+  {template: "standard/test_002", output: [["Jan, 1970"]]}
+]
+
+INVALID_REPORTS = [
+  {template: "invalid/test_001", error: "Invalid type: missing"},
+  {template: "invalid/test_002", error: "Missing template"},
+  {template: "invalid/test_003", error: "unknown attribute 'invalid'"}
+]
+
+def parses_type_test(type, input, output, variables)
+  it "parses a type of: #{type}" do
+    parsed = Reportinator::ValueParser.parse(input, variables)
+    expect(parsed).to eq(output)
+  end
+end
+
+def generates_report_test(template, output)
+  it "generates report: #{template}" do
+    report = Reportinator::Loader.data_from_template(template)
+    expect(report).to eq(output)
+  end
+end
+
+def invalid_report_test(template, error)
+  it "raises error on: #{template}" do
+    expect { Reportinator::Loader.data_from_template(template) }.to raise_error(/#{error}/)
+  end
+end
+
+RSpec.describe Reportinator do
+  it "has a version number" do
+    expect(Reportinator::VERSION).not_to be nil
+  end
+
+  context "can set config" do
+    Reportinator.configure do |config|
+      config.report_directories = ["spec/reports"]
+      config.report_suffixes = ["test.json"]
+    end
+    it "configures report directories" do
+      check = Reportinator.config.configured_directories.include? "spec/reports"
+      expect(check).to be true
+    end
+    it "configures report suffixes" do
+      check = Reportinator.config.configured_suffixes.include? "test.json"
+      expect(check).to be true
+    end
+  end
+
+  context "can parse types" do
+    TYPES.each do |type|
+      parses_type_test(type[:type], type[:input], type[:output], type[:variables])
+    end
+  end
+
+  context "can generate reports" do
+    REPORTS.each do |report|
+      generates_report_test(report[:template], report[:output])
+    end
+  end
+
+  context "will fail on invalid reports" do
+    INVALID_REPORTS.each do |report|
+      invalid_report_test(report[:template], report[:error])
+    end
+  end
+end
