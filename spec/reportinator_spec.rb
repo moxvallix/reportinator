@@ -3,13 +3,14 @@
 TYPES = [
   {input: ":symbol", output: :symbol, type: "symbol"},
   {input: "&Reportinator", output: Reportinator, type: "constant"},
-  {input: "!i 100", output: 100, type: "integer"},
-  {input: "!a !i 50, 50", output: 100, type: "addition"},
+  {input: "!n 100", output: 100, type: "integer number"},
+  {input: "!n 100", output: 100.0, type: "float number"},
+  {input: "!a 50, 50", output: 100, type: "addition"},
   {input: "!d 1970-01-01", output: Time.parse("1970-01-01"), type: "date"},
-  {input: "!r !i 1, !i 100", output: (1..100), type: "integer range"},
+  {input: "!rn 1, 100", output: (1..100), type: "number range"},
   {input: "!r a, z", output: ("a".."z"), type: "string range"},
   {
-    input: "!r !d 1970-01-01, !d 1980-01-01",
+    input: "!rd 1970-01-01, 1980-01-01",
     output: (Time.parse("1970-01-01")..Time.parse("1980-01-01")),
     type: "date range"
   },

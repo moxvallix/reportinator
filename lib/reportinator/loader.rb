@@ -7,8 +7,9 @@ module Reportinator
 
     def self.data_from_template(template, additional_params = {})
       template_data = load_template(template, additional_params)
-      return split_rows([template_data.data]) unless template_data.instance_of?(Array)
-      output = template_data.map { |report| report.data }
+      return split_rows(template_data.data) unless template_data.instance_of?(Array)
+      output = []
+      template_data.each { |report| output += report.data }
       split_rows(output)
     end
 
@@ -48,6 +49,7 @@ module Reportinator
     end
 
     def self.split_rows(data)
+      data = data.instance_of?(Array) ? data : [data]
       rows = []
       temp = []
       data.each do |col|

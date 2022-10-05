@@ -1,6 +1,6 @@
 module Reportinator
   class ValueParser < Base
-    VALUE_FUNCTIONS = %i[a d i r]
+    VALUE_FUNCTIONS = %i[a d n rn rd r]
 
     attribute :element
     attribute :variables, default: {}
@@ -70,12 +70,19 @@ module Reportinator
       function = function_type(input)
       return value unless function.present?
       input.sub!(function_prefix(function), "")
+      output = run_function(function, input)
+      output.nil? ? value : output
+    end
+
+    def run_function(function, input)
       case function
       when :a then addition_function(input)
       when :d then date_function(input)
-      when :i then integer_function(input)
+      when :n then number_function(input)
       when :r then range_function(input)
-      else value
+      when :rn then range_function(input, :number)
+      when :rd then range_function(input, :date)
+      else nil
       end
     end
 
@@ -91,13 +98,9 @@ module Reportinator
     end
 
     def addition_function(value)
-      values = value.split(",").map { |subvalue| parse_value(subvalue.strip) }
-      if values.first.instance_of?(Integer)
-        values.map! { |value| value.to_i }
-        values.sum(0)
-      else
-        values.sum("")
-      end
+      values = parse_function_array(value)
+      values.map! { |value| value.to_i }
+      values.sum(0)
     rescue
       0
     end
@@ -108,17 +111,27 @@ module Reportinator
       Time.now
     end
 
-    def integer_function(value)
+    def number_function(value)
+      float = (value =~ /\d.\d/)
+      return value.to_f if float.present?
       value.to_i
     rescue
       0
     end
 
-    def range_function(value)
-      values = value.split(",").map { |value| parse_value(value.strip) }
+    def range_function(value, type = :any)
+      values = parse_function_array(value)
+      case type
+      when :number then values.map! { |subvalue| number_function(subvalue) }
+      when :date then values.map! { |subvalue| date_function(subvalue) }
+      end
       Range.new(*values)
     rescue
       Range(0..1)
+    end
+
+    def parse_function_array(value)
+      value.split(",").map { |value| parse_value(value.strip) }
     end
 
     def parse_value(value)
