@@ -4,7 +4,7 @@ TYPES = [
   {input: ":symbol", output: :symbol, type: "symbol"},
   {input: "&Reportinator", output: Reportinator, type: "constant"},
   {input: "!n 100", output: 100, type: "integer number"},
-  {input: "!n 100", output: 100.0, type: "float number"},
+  {input: "!n 100.0", output: 100.0, type: "float number"},
   {input: "!a 50, 50", output: 100, type: "addition"},
   {input: "!d 1970-01-01", output: Time.parse("1970-01-01"), type: "date"},
   {input: "!rn 1, 100", output: (1..100), type: "number range"},
@@ -23,15 +23,17 @@ REPORTS = [
 ]
 
 INVALID_REPORTS = [
+  {template: "invalid/test_missing", error: "Missing template"},
   {template: "invalid/test_001", error: "Invalid type: missing"},
   {template: "invalid/test_002", error: "Missing template"},
-  {template: "invalid/test_003", error: "unknown attribute 'invalid'"}
+  {template: "invalid/test_003", error: "Invalid type: "},
+  {template: "invalid/test_004", error: "Error parsing template file"}
 ]
 
 def parses_type_test(type, input, output, variables)
   it "parses a type of: #{type}" do
     parsed = Reportinator::ValueParser.parse(input, variables)
-    expect(parsed).to eq(output)
+    expect(parsed).to eql(output)
   end
 end
 
