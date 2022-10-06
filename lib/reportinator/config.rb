@@ -10,6 +10,7 @@ module Reportinator
     attribute :report_directories, default: []
     attribute :report_suffixes, default: []
     attribute :report_types, default: {}
+    attribute :output_directory, default: "reports"
 
     def configured_directories
       DEFAULT_REPORT_DIRS + report_directories

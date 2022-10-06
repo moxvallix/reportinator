@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "reportinator/version"
+require "csv"
+require "json"
+require "fileutils"
+require "active_support"
+require "active_model"
+require "require_all"
 
 module Reportinator
   class Error < StandardError; end
@@ -25,7 +31,10 @@ module Reportinator
     Loader.data_from_template(template, additional_params)
   end
 
-  def self.output(path, template, additional_params = {})
+  def self.output(template, additional_params = {}, filename = "")
+    filename = (filename.present? ? filename : "#{template}.csv")
+    path = "#{config.output_directory}/#{filename}"
+    FileUtils.mkdir_p(File.dirname(path))
     data = Loader.data_from_template(template, additional_params)
     CSV.open(path, "wb") do |csv|
       data.each do |row|
@@ -36,12 +45,6 @@ module Reportinator
   end
 
   class Base
-    require "csv"
-    require "json"
-    require "active_support"
-    require "active_model"
-    require "require_all"
-
     include ActiveModel::API
     include ActiveModel::Attributes
 

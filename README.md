@@ -23,11 +23,11 @@ Let's start by considering what we want our output to be.
 Say we want a multiplication table, like such:
 | nx1 | nx2 | nx3 | nx4 | nx5 |
 |-----|-----|-----|-----|-----|
-|  1  |  2  |  3  |  4  |  5  |
-|  2  |  4  |  6  |  8  | 10  |
-|  3  |  6  |  9  | 12  | 15  |
-|  4  |  8  | 12  | 16  | 20  |
-|  5  | 10  | 15  | 20  | 25  |
+|   1 |   2 |   3 |   4 |   5 |
+|   2 |   4 |   6 |   8 |  10 |
+|   3 |   6 |   9 |  12 |  15 |
+|   4 |   8 |  12 |  16 |  20 |
+|   5 |  10 |  15 |  20 |  25 |
 
 Make a new file in your `app/reports` directory.
 Name it `multiplication.report.json`
@@ -87,11 +87,11 @@ Now we could add the other rows ourselves, by adding more rows to "data":
   "params": {
     "data": [
       ["nx1","nx2","nx3","nx4","nx5"],
-      [1,2,3,4,5],
-      [2,4,6,8,10],
-      [3,6,9,12,15],
-      [4,8,12,16,20],
-      [5,10,15,20,25]
+      [1, 2, 3, 4, 5],
+      [2, 4, 6, 8, 10],
+      [3, 6, 9, 12, 15],
+      [4, 8, 12, 16, 20],
+      [5, 10, 15, 20, 25]
     ]   
   }
 }
@@ -333,9 +333,11 @@ More locations and suffixes can be added in the config.
 ### Getting your Report's Output
 `Reportinator.report(template, params)` will output a two dimensional array.
 If you picture this as a table, each sub array is a row.
+`params` is optional.
 
-`Reportinator.output("report.csv", template, params)` will output the report to a csv,
-at the specified path.
+`Reportinator.output(template, params, filename)` will output the report to a csv,
+in the configured output directory.
+`params` and `filename` are optional.
 
 Template is the name of the template file, minus the ".json" suffix.
 Here is how templates are resolved:
@@ -348,6 +350,7 @@ Params are merged with those provided by the template, overriding any conflicts.
 ### Configuring Reportinator
 ```
 Reportinator.configuration do |config|
+    config.output_directory = "my/report/dir"
     config.report_directories = ["first/directory","other/directory"]
     config.report_suffixes = ["custom.json", "txt"]
     config.report_types = {
