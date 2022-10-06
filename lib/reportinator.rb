@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-require_relative "reportinator/version"
 require "csv"
 require "json"
 require "fileutils"
 require "active_support"
 require "active_model"
 require "require_all"
+require_relative "reportinator/version"
+require_relative "reportinator/base"
 
 module Reportinator
   class Error < StandardError; end
@@ -42,28 +43,5 @@ module Reportinator
       end
     end
     path
-  end
-
-  class Base
-    include ActiveModel::API
-    include ActiveModel::Attributes
-
-    require_all "lib/reportinator"
-
-    def self.config
-      Reportinator.config
-    end
-
-    def config
-      self.class.config
-    end
-
-    def self.logger
-      Reportinator.logger
-    end
-
-    def logger
-      self.class.logger
-    end
   end
 end
