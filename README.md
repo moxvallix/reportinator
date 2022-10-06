@@ -286,35 +286,44 @@ lets put it into a csv.
 Open the csv up in your spreadsheet viewer of choice, and revel
 in your brand new report!
 ### Reports in more detail
+#### The Report Template Object
+A Report template has four attributes:
 
-A Report template has four main keys:
-- type: a symbol, specifying the report type
-- variables: a hash of variables, for substitution
-- template: a string, referencing the name of another template to load
-- params: a hash of parameters that will be passed to the report
+| key       | type   | description                                        |
+|-----------|--------|----------------------------------------------------|
+| type      | symbol | specifies the report type to use                   |
+| variables | hash   | defines variables to be used with the `$` function |
+| template  | string | references another template to load and merge with |
+| params    | hash   | report specific parameters                         |
 
-Reportinator also has it's own syntax for use in JSON templates:
-- ":symbol": a string starting with a ":" will be converted to a symbol
-- "&Constant": a string starting with a "&" will be constantized
-- "$variable": a string starting with a "$" will substitute with a matching key in the variables hash
-- "!functions":
-  - "!a": addition, adds together comma seperated values ("!a 2,3" = 5)
-  - "!i": converts following string to integer ("!i 100" = 100)
-  - "!d": parses following string as a date ("!d 1970-01-01" = Jan 01, 1970)
-  - "!r": converts comma seperated values to range ("!r !i 0, !i 100" = (0..100))
-      - "!rd": same interface
+#### Reportinator String Parse Cheatsheet
+| prefix | example                     | output                                     |
+|--------|-----------------------------|--------------------------------------------|
+| `:`    | ":symbol"                   | :symbol                                    |
+| `&`    | "&Constant"                 | Constant                                   |
+| `$`    | "$variable"                 | Value of key `variable` in variables hash. |
+| `!a`   | "!a 1,2,3"                  | 6                                          |
+| `!d`   | "!d 1970-01-01"             | 1970-01-01 00:00:00                        |
+| `!n`   | "!n 100"                    | 100                                        |
+| `!r`   | "!r a,z"                    | ("a".."z")                                 |
+| `!rd`  | "!rd 1970-01-01,1979-01-01" | (1970-01-01 00:00:00..1979-01-01 00:00:00) |
+| `!rn`  | "!rn 1,100"                 | (1..100)                                   |
 
-JSON templates can also be used to evaluate methods.
-If the first element in an array is a string starting with a hash, it is parsed, and set as the target.
-Subsequent elements in the array are chained as such:
-- ["#100", ":to_i"] => "100".to_i = 100
-- ["#100", ":reverse", ":to_i"] => "100".reverse.to_i = 1
-Notice that methods are represented as symbols.
+#### Reportinator Method Parse Cheatsheet
+When an array has a string as it's first value, and that string has the `#` prefix,
+that string is parsed, and the result becomes the target of the following methods.
 
-Parameters can be passed into a method by using a hash:
-["#!d 1970-01-01", {"strftime": "%b, %Y"}] => (Jan 01, 1970).strftime("%b, %Y") = "Jan, 1970"
-Keys in a hash are automatically converted to symbols.
-Note: this only applies to the first value in a hash, all others are ignored.
+Hashes within the array take the first key in the hash as the method,
+and the first value as parameters for that method. If the first value
+is an array, each item in the array is sent as a seperate parameter.
+
+Subsequent symbols in the array are sent as methods to the target.
+| method array                                   | ruby equivalent               |
+|------------------------------------------------|-------------------------------|
+| `["#&Date", ":today"]`                         | Date.today                    |
+| `["#&Date", ":today", ":to_s"]`                | Date.today.to_s               |
+| `["#&Date", ":today", {"strftime": "%b, %Y"}]` | Date.today.strftime("%b, %Y") |
+| `["#&Range", {"new": [1,100]}]`                | Range.new(1, 100)             |
 
 ### Where to put my Reports?
 By default, Reportinator checks `app/reports` for reports.

@@ -98,36 +98,44 @@ module Reportinator
     end
 
     def addition_function(value)
-      values = parse_function_array(value)
-      values.map! { |value| value.to_i }
-      values.sum(0)
-    rescue
-      0
+      begin
+        values = parse_function_array(value)
+        values.map! { |value| number_function(value) }
+        values.sum(0)
+      rescue
+        0
+      end
     end
 
     def date_function(value)
-      Time.parse(value)
-    rescue
-      Time.now
+      begin
+        Time.parse(value)
+      rescue
+        Time.now
+      end
     end
 
     def number_function(value)
-      float = (value =~ /\d.\d/)
-      return value.to_f if float.present?
-      value.to_i
-    rescue
-      0
+      begin
+        float = (value =~ /\d\.\d/)
+        return value.to_f if float.present?
+        value.to_i
+      rescue
+        0
+      end
     end
 
     def range_function(value, type = :any)
-      values = parse_function_array(value)
-      case type
-      when :number then values.map! { |subvalue| number_function(subvalue) }
-      when :date then values.map! { |subvalue| date_function(subvalue) }
+      begin
+        values = parse_function_array(value)
+        case type
+        when :number then values.map! { |subvalue| number_function(subvalue) }
+        when :date then values.map! { |subvalue| date_function(subvalue) }
+        end
+        Range.new(*values)
+      rescue
+        Range(0..1)
       end
-      Range.new(*values)
-    rescue
-      Range(0..1)
     end
 
     def parse_function_array(value)

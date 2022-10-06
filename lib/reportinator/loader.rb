@@ -24,9 +24,10 @@ module Reportinator
     end
 
     def self.load_singular(data, additional_params)
-      data.merge!(additional_params) { |key, old_value, new_value| old_value.merge(new_value) }
-      variables = data[:variables]
-      parsed_data = ValueParser.parse(data, variables)
+      data.merge!(additional_params) { |key, old_value, new_value| merge_values(new_value, old_value) }
+      filtered_data = filter_params(data, attribute_names)
+      variables = filtered_data[:variables]
+      parsed_data = ValueParser.parse(filtered_data, variables)
       new(parsed_data).report
     end
 
@@ -44,8 +45,12 @@ module Reportinator
 
     def self.parse_template(template)
       file = find_template(template)
-      json = File.read(file)
-      JSON.parse(json, symbolize_names: true)
+      begin
+        json = File.read(file)
+        JSON.parse(json, symbolize_names: true)
+      rescue
+        raise "Error parsing template file: #{file}"
+      end
     end
 
     def self.split_rows(data)
@@ -65,17 +70,27 @@ module Reportinator
       rows
     end
 
+    def self.filter_params(params, allowed_params)
+      filtered_params = params.select { |param| allowed_params.include? param.to_s }
+      if params.size > filtered_params.size
+        invalid_params = (params.keys - filtered_params.keys).map { |key| key.to_s }
+        logger.warn "Invalid attributes found: #{invalid_params} Valid attributes are: #{allowed_params}"
+      end
+      filtered_params
+    end
+
+    def self.merge_values(new_value, old_value)
+      return old_value.merge(new_value) if old_value.is_a?(Hash) && new_value.is_a?(Hash)
+      new_value
+    end
+
     def report
       if template.present?
         additional_params = {type: type, variables: variables, params: params}
         self.class.load_template(template, additional_params.compact)
       else
         attribute_list = report_class.attribute_names
-        filtered_params = params.select { |param| attribute_list.include? param.to_s }
-        if params.size > filtered_params.size
-          invalid_params = (params.keys - filtered_params.keys).map { |key| key.to_s }
-          logger.warn "Invalid attributes found: #{invalid_params} Valid attributes are: #{attribute_list}"
-        end
+        filtered_params = self.class.filter_params(params, attribute_list)
         report_class.new(filtered_params)
       end
     end
