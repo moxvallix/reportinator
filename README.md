@@ -70,7 +70,7 @@ Let's now add some data to this bad boy.
 {
   "type": ":preset",
   "params": {
-    "data": ["nx1","nx2","nx3","nx4","nx5"]   
+    "data": ["nx1","nx2","nx3","nx4","nx5"]
   }
 }
 ```
@@ -262,7 +262,7 @@ Let's add this now as the target of our report:
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]   
+      "data": ["nx1","nx2","nx3","nx4","nx5"]
     }
   },
   {
