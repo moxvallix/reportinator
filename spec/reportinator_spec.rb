@@ -14,7 +14,11 @@ TYPES = [
     output: (Time.parse("1970-01-01")..Time.parse("1980-01-01")),
     type: "date range"
   },
-  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}}
+  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}},
+  {input: "@true", output: true, type: "logical true"},
+  {input: "@false", output: false, type: "logical false"},
+  {input: "@nil", output: nil, type: "logical nil"},
+  {input: "@null", output: nil, type: "logical nil (null input)"}
 ]
 
 REPORTS = [

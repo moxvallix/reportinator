@@ -51,6 +51,7 @@ module Reportinator
       return element.sub("&", "").constantize if element.start_with?("&")
       return parse_variable(element) if element.start_with?("$")
       return parse_function(element) if element.start_with?("!")
+      return parse_logical(element) if element.start_with?("@")
       element
     end
 
@@ -72,6 +73,16 @@ module Reportinator
       input.sub!(function_prefix(function), "")
       output = run_function(function, input)
       output.nil? ? value : output
+    end
+
+    def parse_logical(value)
+      input = value.sub("@", "").strip
+      case input
+      when "true" then true
+      when "false" then false
+      when "nil", "null" then nil
+      else value
+      end
     end
 
     def run_function(function, input)
