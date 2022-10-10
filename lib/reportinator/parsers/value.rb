@@ -1,7 +1,6 @@
 module Reportinator
   class ValueParser < Parser
     VALUE_FUNCTIONS = %i[a d n rn rd r]
-    ESCAPE_VALUES = %w[ : & # $ ! @ ? ]
 
     attribute :element
     attribute :variables, default: {}

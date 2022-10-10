@@ -30,7 +30,7 @@ module Reportinator
 
     def parse_method(target, method)
       parsed_method = ValueParser.parse(method)
-      return parsed_method if parsed_method.class == String
+      return parsed_method if parsed_method.instance_of?(String)
       MethodParser.parse(target, parsed_method)
     end
   end

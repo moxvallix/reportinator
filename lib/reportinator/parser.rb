@@ -1,6 +1,6 @@
 module Reportinator
   class Parser < Base
-    ESCAPE_VALUES = %w[ : & # $ ! @ ? ]
+    ESCAPE_VALUES = %w[: & # $ ! @ ?]
 
     def escape_value(value)
       return value unless value.is_a? String
