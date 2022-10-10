@@ -10,7 +10,7 @@ class User
   attribute :last_name
 end
 
-PARAMS = {id: 1, first_name: "Test", last_name: "User"}
+PARAMS = {id: 1, first_name: "$Test", last_name: "User"}
 
 Reportinator.configure do |config|
   config.report_directories = ["spec/reports"]
@@ -23,7 +23,8 @@ RSpec.describe "A working user report" do
       user = User.new(PARAMS)
       report = Reportinator::Loader.data_from_template("test_user", {variables: {user: user}})
       output = [[PARAMS[:id], PARAMS[:first_name], PARAMS[:last_name]]]
-      expect(report).to eq(output)
+      parsed_output = Reportinator::ReportParser.parse output
+      expect(report).to eq(parsed_output)
     end
   end
 end

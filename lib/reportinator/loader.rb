@@ -7,10 +7,14 @@ module Reportinator
 
     def self.data_from_template(template, additional_params = {})
       template_data = load_template(template, additional_params)
-      return split_rows(template_data.data) unless template_data.instance_of?(Array)
+      unless template_data.instance_of?(Array)
+        output = split_rows(template_data.data)
+        return ReportParser.parse(output)
+      end
       output = []
       template_data.each { |report| output += report.data }
-      split_rows(output)
+      formatted_output = split_rows(output)
+      ReportParser.parse(formatted_output)
     end
 
     def self.load_template(template, additional_params = {})

@@ -1,6 +1,7 @@
 module Reportinator
-  class ValueParser < Base
+  class ValueParser < Parser
     VALUE_FUNCTIONS = %i[a d n rn rd r]
+    ESCAPE_VALUES = %w[ : & # $ ! @ ? ]
 
     attribute :element
     attribute :variables, default: {}
@@ -22,7 +23,7 @@ module Reportinator
     def output
       return parse_array if element_class == Array
       return parse_hash if element_class == Hash
-      return parse_string if element_class == String
+      return escape_value(parse_string) if element_class == String
       element
     end
 

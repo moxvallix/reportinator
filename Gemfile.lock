@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    reportinator (0.1.0)
+    reportinator (0.2.0)
       activemodel (~> 7.0)
       require_all (~> 3.0)
 

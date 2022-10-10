@@ -1,5 +1,5 @@
 module Reportinator
-  class MethodParser < Base
+  class MethodParser < Parser
     attribute :target
     attribute :method
 
@@ -8,7 +8,10 @@ module Reportinator
     end
 
     def output
-      return send_value(target, method) if method_class == Symbol
+      if method_class == Symbol
+        value = send_value(target, method)
+        return escape_value(value)
+      end
       return parse_array_method if method_class == Array
       return parse_hash_method if method_class == Hash
       nil

@@ -1,4 +1,12 @@
 ## [Unreleased]
+### Added
+- Added parser for true, false and nil ("@true", "@false", "@nil")
+- Escape parsed methods and values starting with a special character
+- Added Report parser
+
+### Changed
+- Load from template method now parses the report through the Report parser.
+- Plain strings in the model report method list return as a string rather than nil
 
 ## [0.1.0] - 2022-10-06
 - Initial release

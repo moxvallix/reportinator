@@ -22,9 +22,16 @@ module Reportinator
     end
 
     def get_model_data(target)
+      parsed_target = ValueParser.parse(target)
       method_list.map do |method|
-        ValueParser.parse_and_execute(target, method)
+        parse_method(parsed_target, method)
       end
+    end
+
+    def parse_method(target, method)
+      parsed_method = ValueParser.parse(method)
+      return parsed_method if parsed_method.class == String
+      MethodParser.parse(target, parsed_method)
     end
   end
 end
