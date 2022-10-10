@@ -15,6 +15,8 @@ TYPES = [
     type: "date range"
   },
   {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}},
+  {input: ["#&Date", ":today"], output: Date.today, type: "method"},
+  {input: ["#", "&Date", ":today"], output: Date.today, type: "method 2"},
   {input: "@true", output: true, type: "logical true"},
   {input: "@false", output: false, type: "logical false"},
   {input: "@nil", output: nil, type: "logical nil"},

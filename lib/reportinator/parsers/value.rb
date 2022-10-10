@@ -37,7 +37,13 @@ module Reportinator
       raise "Not an executable array" unless element[0].start_with?("#")
       values = element
       target = values.delete_at(0).sub("#", "")
-      parse_and_execute_value(target, values)
+      return parse_and_execute_value(target, values) if target.present?
+      if values.count > 1
+        target = values.delete_at(0)
+        parse_and_execute_value(target, values)
+      else
+        element
+      end
     end
 
     def parse_hash
