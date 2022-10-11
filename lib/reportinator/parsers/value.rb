@@ -1,6 +1,6 @@
 module Reportinator
   class ValueParser < Parser
-    VALUE_FUNCTIONS = %i[a d n rn rd r]
+    VALUE_FUNCTIONS = %i[a d n j rn rd r]
 
     attribute :element
     attribute :variables, default: {}
@@ -30,6 +30,7 @@ module Reportinator
       raise "Not an array" unless element_class == Array
       front = element[0]
       return parse_executed_array if front.instance_of?(String) && front.start_with?("#")
+      return parse_joined_array if front.instance_of?(String) && front.start_with?("+")
       element.map { |value| parse_value(value) }
     end
 
@@ -44,6 +45,16 @@ module Reportinator
       else
         element
       end
+    end
+
+    def parse_joined_array
+      raise "Not a joinable array" unless element[0].start_with?("+")
+      values = element
+      joiner = values.delete_at(0).sub("+", "")
+      joiner = values.delete_at(0) if values.count > 1 && joiner.empty?
+      parsed_joiner = parse_value(joiner)
+      parsed_joiner = (parsed_joiner.instance_of?(String) ? parsed_joiner : joiner)
+      values.map { |value| parse_value(value) }.join(parsed_joiner)
     end
 
     def parse_hash
@@ -97,6 +108,7 @@ module Reportinator
       when :d then date_function(input)
       when :n then number_function(input)
       when :r then range_function(input)
+      when :j then join_function(input)
       when :rn then range_function(input, :number)
       when :rd then range_function(input, :date)
       end
@@ -146,8 +158,13 @@ module Reportinator
       Range(0..1)
     end
 
-    def parse_function_array(value)
-      value.split(",").map { |value| parse_value(value.strip) }
+    def join_function(value)
+      values = parse_function_array(value)
+      values.join(" ")
+    end
+
+    def parse_function_array(value, strip = true)
+      value.split(",").map { |value| parse_value(strip ? value.strip : value) }
     end
 
     def parse_value(value)

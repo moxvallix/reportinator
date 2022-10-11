@@ -12,9 +12,8 @@ module Reportinator
         return ReportParser.parse(output)
       end
       output = []
-      template_data.each { |report| output += report.data }
-      formatted_output = split_rows(output)
-      ReportParser.parse(formatted_output)
+      template_data.each { |report| output += split_rows(report.data) }
+      ReportParser.parse(output)
     end
 
     def self.load_template(template, additional_params = {})
@@ -28,6 +27,11 @@ module Reportinator
     end
 
     def self.load_singular(data, additional_params)
+      parent_variables = additional_params[:variables]
+      child_variables = data[:variables]
+      if child_variables.present?
+        data[:variables] = ValueParser.parse(child_variables, parent_variables)
+      end
       data.merge!(additional_params) { |key, old_value, new_value| merge_values(new_value, old_value) }
       filtered_data = filter_params(data, attribute_names)
       variables = filtered_data[:variables]

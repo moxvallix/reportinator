@@ -6,15 +6,13 @@ module Reportinator
     validates :target, presence: true
 
     def data
-      return get_model_data(target) unless target.methods.include? :first
+      return get_model_data(target) unless target.respond_to? :to_ary
       records_data
     end
 
     def records_data
-      records = target
-      records = target.all if target.methods.include? :all
       output = []
-      records.each do |model|
+      target.each do |model|
         value = get_model_data(model)
         output << value
       end

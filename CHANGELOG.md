@@ -3,11 +3,13 @@
 - Added parser for true, false and nil ("@true", "@false", "@nil")
 - Escape parsed methods and values starting with a special character
 - Added Report parser
+- Added "!j" join function, and "+" join array function
 
 ### Changed
 - Load from template method now parses the report through the Report parser.
 - Plain strings in the model report method list return as a string rather than nil
 - Arrays starting with a string containing only a hash attempt to use the second value as target
+- Improved Loader's row splitting.
 
 ## [0.1.0] - 2022-10-06
 - Initial release
