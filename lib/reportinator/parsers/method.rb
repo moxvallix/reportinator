@@ -27,7 +27,6 @@ module Reportinator
       output = target
       method.each do |m|
         value = parse_method(output, m)
-        next unless value.present?
         valid = true
         output = value
       end
