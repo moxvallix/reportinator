@@ -73,8 +73,8 @@ A Report template has four attributes:
 | `@null` | "@null"                     | nil                                        |
 
 #### Reportinator Array Function Cheatsheet
-When an array has a string as it's first value, and that string has a certain prefix
-the array is parsed as an Array Function.
+When an array has a string as it's first value, and that string has a certain prefix,
+the given array is parsed as an Array Function.
 
 Array functions have a target, then an array of values. Often, the values will work
 with the target to achieve an outcome.
@@ -95,7 +95,8 @@ are parsed, and sent as methods to it. The result is returned.
 This array is equivalent to running `Date.today.to_s`.
 
 Optionally, the prefix can be put on it's own, with no additional values
-after it.
+after it. The second value, in this case "&Date", will become the target
+instead.
 ```
 ["#", "&Date", ":today", ":to_s"]
 ```
@@ -135,7 +136,9 @@ of the reports.
 ### Making a Custom Report Type
 The requirements to make a Report are very simple.
 1. The report must inherit from `Reportinator::Report`
-2. The report must provide a `data` method, which returns a one or two dimensional array.
+2. The report should provide some attributes, to be set with the "params" field,
+3. The report must provide a `data` method, which returns a one or two dimensional array,
+manipulating the "params" in some way.
 
 For example, this is the entire code for the Preset Report:
 ```
