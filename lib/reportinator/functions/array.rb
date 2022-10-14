@@ -2,6 +2,7 @@ module Reportinator
   class ArrayFunction < Function
     PREFIXES = []
 
+    attribute :prefix
     attribute :target
     attribute :values
 
@@ -28,10 +29,11 @@ module Reportinator
       array = element
       prefix = get_prefix(array[0])
       target_value = array.delete_at(0).sub(prefix, "")
-      target_value = array.delete_at(0) if array.count > 1 && target_value.empty?
+      target_value = array.delete_at(0) if target_value.empty?
       if target_value.to_s.empty?
         false
       else
+        self.prefix = prefix
         self.target = target_value
         self.values = array
         true

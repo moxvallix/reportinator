@@ -27,7 +27,7 @@ module Reportinator
       sorted_prefixes.each do |prefix|
         return prefix if value.start_with? prefix
       end
-      raise "Value is incompatible with this function!"
+      raise "Value #{value} is incompatible with this function!"
     end
   end
 end

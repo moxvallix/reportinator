@@ -1,6 +1,6 @@
 module Reportinator
   class JoinArrayFunction < ArrayFunction
-    PREFIXES = ["+"]
+    PREFIXES = [">join"]
 
     def output
       joiner = ValueParser.parse(target, variables)

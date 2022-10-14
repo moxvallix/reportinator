@@ -14,13 +14,17 @@ TYPES = [
     output: (Time.parse("1970-01-01")..Time.parse("1980-01-01")),
     type: "date range"
   },
-  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}},
-  {input: ["#&Date", ":today"], output: Date.today, type: "method"},
-  {input: ["#", "&Date", ":today"], output: Date.today, type: "method 2"},
   {input: "@true", output: true, type: "logical true"},
   {input: "@false", output: false, type: "logical false"},
   {input: "@nil", output: nil, type: "logical nil"},
-  {input: "@null", output: nil, type: "logical nil (null input)"}
+  {input: "@null", output: nil, type: "logical nil (null input)"},
+  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}},
+  {input: ["#&Date", ":today"], output: Date.today, type: "method"},
+  {input: ["#", "&Date", ":today"], output: Date.today, type: "method (prefix separate)"},
+  {input: [">join ", "a", "b", "c"], output: "a b c", type: "helper (join)"},
+  {input: [">strf !d 1970-01-01", "%b, %Y"], output: "Jan, 1970", type: "helper (strf)"},
+  {input: [">offset !d 1970-01-01", 1, ":year", ":start"], output: Time.parse("1971-01-01"), type: "helper (offset)"},
+  {input: [">title", "hello", "world"], output: "Hello World", type: "helper (title)"},
 ]
 
 REPORTS = [

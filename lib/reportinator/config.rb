@@ -7,6 +7,7 @@ module Reportinator
     DEFAULT_REPORT_DIRS = ["reports", "app/reports"]
     DEFAULT_REPORT_SUFFIXES = ["report.json", "json"]
     DEFAULT_FUNCTIONS = [
+      "Reportinator::HelperArrayFunction",
       "Reportinator::JoinArrayFunction",
       "Reportinator::MethodArrayFunction",
       "Reportinator::AdditionStringFunction",

@@ -28,6 +28,10 @@ module Reportinator
     @logger || ActiveSupport::Logger.new($stdout)
   end
 
+  def self.parse(input, variables = {})
+    ValueParser.parse(input, variables)
+  end
+
   def self.report(template, additional_params = {})
     Loader.data_from_template(template, additional_params)
   end
