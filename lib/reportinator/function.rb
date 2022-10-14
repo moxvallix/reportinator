@@ -14,7 +14,7 @@ module Reportinator
     def parse_and_execute_value(target, value)
       ValueParser.parse_and_execute(target, value, variables)
     end
-    
+
     def prefixes
       self.class::PREFIXES
     end

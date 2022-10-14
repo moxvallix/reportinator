@@ -6,7 +6,7 @@ module Reportinator
       days: {start: "at_beginning_of_day", end: "at_end_of_day"},
       weeks: {start: "at_beginning_of_week", end: "at_end_of_week"},
       months: {start: "at_beginning_of_month", end: "at_end_of_month"},
-      years: {start: "at_beginning_of_year", end: "at_end_of_year"},
+      years: {start: "at_beginning_of_year", end: "at_end_of_year"}
     }
 
     attr_writer :parsed_target, :parsed_values

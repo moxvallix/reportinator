@@ -24,7 +24,7 @@ module Reportinator
         element
       end
     end
-    
+
     def set_attributes
       array = element
       prefix = get_prefix(array[0])
