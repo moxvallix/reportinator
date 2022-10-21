@@ -4,16 +4,40 @@ module Reportinator
     attribute :template
     attribute :variables
     attribute :params
+    attribute :meta
 
     def self.data_from_template(template, additional_params = {})
+      report = report_from_template(template, additional_params)
+      report.output
+    end
+
+    def self.report_from_template(template, additional_params = {})
+      report = Reportinator::Report.new
       template_data = load_template(template, additional_params)
-      unless template_data.instance_of?(Array)
-        output = split_rows(template_data.data)
-        return ReportParser.parse(output)
+      if template_data.instance_of?(Array)
+        template_data.each do |loader|
+          loader_report = loader.report
+          report.add_metadata(loader.meta) if loader.meta.present?
+          report.insert(loader_report.data) unless loader_report == :blank
+        end
+      else
+        loader_report = template_data.report
+        metadata = template_data.meta
+        report.add_metadata(metadata) if metadata.present?
+        report.insert(loader_report.data) unless loader_report == :blank
       end
-      output = []
-      template_data.each { |report| output += split_rows(report.data) }
-      ReportParser.parse(output)
+      report
+    end
+
+    def self.metadata_from_template(template, additional_params = {})
+      template_data = parse_template(template)
+      return template_data[:meta] unless template_data.instance_of?(Array)
+      metadata = {}
+      template_data.each do |template|
+        next unless template.include? :meta
+        metadata.merge!(template[:meta])
+      end
+      metadata
     end
 
     def self.load_template(template, additional_params = {})
@@ -27,6 +51,10 @@ module Reportinator
     end
 
     def self.load_singular(data, additional_params)
+      load_report(data, additional_params)
+    end
+
+    def self.load_report(data, additional_params = {})
       parent_variables = additional_params[:variables]
       child_variables = data[:variables]
       if child_variables.present?
@@ -36,7 +64,7 @@ module Reportinator
       filtered_data = filter_params(data, attribute_names)
       variables = filtered_data[:variables]
       parsed_data = ValueParser.parse(filtered_data, variables)
-      new(parsed_data).report
+      new(parsed_data)
     end
 
     def self.find_template(template)
@@ -53,29 +81,14 @@ module Reportinator
 
     def self.parse_template(template)
       file = find_template(template)
-      begin
-        json = File.read(file)
-        JSON.parse(json, symbolize_names: true)
-      rescue
-        raise "Error parsing template file: #{file}"
-      end
+      parse_template_file(file)
     end
 
-    def self.split_rows(data)
-      data = data.instance_of?(Array) ? data : [data]
-      rows = []
-      temp = []
-      data.each do |col|
-        if col.instance_of?(Array)
-          rows << temp unless temp.empty?
-          temp = []
-          rows << col
-        else
-          temp << col
-        end
-      end
-      rows << temp unless temp.empty?
-      rows
+    def self.parse_template_file(file)
+      json = File.read(file)
+      JSON.parse(json, symbolize_names: true)
+    rescue
+      raise "Error parsing template file: #{file}"
     end
 
     def self.filter_params(params, allowed_params)
@@ -95,11 +108,13 @@ module Reportinator
     def report
       if template.present?
         additional_params = {type: type, variables: variables, params: params}
-        self.class.load_template(template, additional_params.compact)
-      else
+        self.class.load_template(template, additional_params.compact).report
+      elsif type.present?
         attribute_list = report_class.attribute_names
         filtered_params = self.class.filter_params(params, attribute_list)
         report_class.new(filtered_params)
+      else
+        :blank
       end
     end
 

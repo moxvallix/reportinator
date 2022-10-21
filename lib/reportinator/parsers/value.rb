@@ -6,6 +6,8 @@ module Reportinator
     def self.parse(element, variables = {})
       variables = variables.present? ? variables : {}
       new(element: element, variables: variables).output
+    rescue
+      "Parsing Error"
     end
 
     def self.parse_and_execute(target, values, variables = {})

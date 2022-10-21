@@ -3,7 +3,7 @@
     "type": ":preset",
     "variables": {"variable": "i am a variable"},
     "params": {
-      "data": [
+      "values": [
         "string", ":symbol", "&Reportinator",
         "$variable", "!i 1234", "!a !i 2, 2",
         ["#!d 1970-01-01", {"strftime": "%b, %Y"}], "!r !i 1, !i 5"

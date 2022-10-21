@@ -1,5 +1,5 @@
 module Reportinator
-  class Report < Base
+  class ReportType < Base
     attribute :title
 
     def self.generate(params)

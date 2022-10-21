@@ -30,7 +30,8 @@ TYPES = [
 REPORTS = [
   {template: "standard/test_001", output: [["string", :symbol]]},
   {template: "standard/test_002", output: [["Jan, 1970"]]},
-  {template: "standard/test_003", output: [["a", "b", "c"], ["1", "2", "3"]]}
+  {template: "standard/test_003", output: [["a", "b", "c"], ["1", "2", "3"]]},
+  {template: "standard/test_004", output: [["a", "b", "c"], ["1", "2", "3"]]}
 ]
 
 INVALID_REPORTS = [

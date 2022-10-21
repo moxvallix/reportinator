@@ -1,13 +1,13 @@
 module Reportinator
-  class ModelReport < Report
+  class ModelReport < ReportType
     attribute :target
     attribute :method_list, default: []
 
     validates :target, presence: true
 
     def data
-      return get_model_data(target) unless target.respond_to? :to_ary
-      records_data
+      return Row.create(get_model_data(target)) unless target.respond_to? :to_ary
+      records_data.map { |data| Row.create(data) }
     end
 
     def records_data

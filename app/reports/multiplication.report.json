@@ -2,7 +2,7 @@
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]   
+      "values": ["nx1","nx2","nx3","nx4","nx5"]   
     }
   },
   {

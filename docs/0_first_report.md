@@ -31,7 +31,7 @@ Add "data" to a "params" object, and set it to be an empty array.
 {
   "type": ":preset",
   "params": {
-    "data": []   
+    "values": []   
   }
 }
 ```
@@ -50,7 +50,7 @@ Let's now add some data to this bad boy.
 {
   "type": ":preset",
   "params": {
-    "data": ["nx1","nx2","nx3","nx4","nx5"]
+    "values": ["nx1","nx2","nx3","nx4","nx5"]
   }
 }
 ```
@@ -59,13 +59,13 @@ Let's now add some data to this bad boy.
 => [["nx1", "nx2", "nx3", "nx4", "nx5"]]
 ```
 
-Now we could add the other rows ourselves, by adding more rows to "data":
+Now we could add the other rows ourselves, by adding more rows to "values":
 
 ```
 {
   "type": ":preset",
   "params": {
-    "data": [
+    "values": [
       ["nx1","nx2","nx3","nx4","nx5"],
       [1, 2, 3, 4, 5],
       [2, 4, 6, 8, 10],
@@ -98,7 +98,7 @@ This allows us to string reports together in the same template.
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]   
+      "values": ["nx1","nx2","nx3","nx4","nx5"]   
     }
   }
 ]
@@ -119,7 +119,7 @@ Set both to be an empty array.
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]   
+      "values": ["nx1","nx2","nx3","nx4","nx5"]   
     }
   },
   {
@@ -174,7 +174,7 @@ Using this, we can write a much smarter report.
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]   
+      "values": ["nx1","nx2","nx3","nx4","nx5"]   
     }
   },
   {
@@ -242,7 +242,7 @@ Let's add this now as the target of our report:
   {
     "type": ":preset",
     "params": {
-      "data": ["nx1","nx2","nx3","nx4","nx5"]
+      "values": ["nx1","nx2","nx3","nx4","nx5"]
     }
   },
   {
