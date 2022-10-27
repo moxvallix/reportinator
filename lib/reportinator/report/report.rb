@@ -1,19 +1,9 @@
 module Reportinator
   class Report < Base
-    attr_writer :metadata
     attr_writer :rows
 
     def rows
       @rows ||= []
-    end
-
-    def metadata
-      @metadata ||= {}
-    end
-
-    def add_metadata(value)
-      raise "Not a hash" unless value.instance_of? Hash
-      metadata.merge!(value)
     end
 
     def insert(row, position = :last)

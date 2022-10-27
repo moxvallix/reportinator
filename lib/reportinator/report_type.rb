@@ -1,5 +1,7 @@
 module Reportinator
   class ReportType < Base
+    PARSE_PARAMS = true
+
     attribute :title
 
     def self.generate(params)

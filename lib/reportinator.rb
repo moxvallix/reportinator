@@ -28,19 +28,20 @@ module Reportinator
     @logger || ActiveSupport::Logger.new($stdout)
   end
 
-  def self.parse(input, variables = {})
-    ValueParser.parse(input, variables)
+  def self.parse(input, metadata = {})
+    ValueParser.parse(input, metadata)
   end
 
-  def self.report(template, additional_params = {})
-    Loader.data_from_template(template, additional_params)
+  def self.report(template, metadata = {})
+    report = ReportLoader.load(template, metadata).report
+    report.output
   end
 
-  def self.output(template, additional_params = {}, filename = "")
+  def self.output(template, metadata = {}, filename = "")
     filename = (filename.present? ? filename : "#{template}.csv")
     path = "#{config.output_directory}/#{filename}"
     FileUtils.mkdir_p(File.dirname(path))
-    data = Loader.data_from_template(template, additional_params)
+    data = report(template, metadata)
     CSV.open(path, "wb") do |csv|
       data.each do |row|
         csv << row

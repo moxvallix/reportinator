@@ -13,7 +13,7 @@
   {
     "type": ":model",
     "params": {
-      "target": ["#&Reportinator", ":config"],
+      "target": ["#", "&Reportinator", ":config"],
       "method_list": [":configured_directories", ":configured_suffixes", ":configured_types"]
     }
   }

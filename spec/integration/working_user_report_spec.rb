@@ -21,7 +21,7 @@ RSpec.describe "A working user report" do
   context "given a valid model, params and reportinator config" do
     it "outputs correct information" do
       user = User.new(PARAMS)
-      report = Reportinator::Loader.data_from_template("test_user", {variables: {user: user}})
+      report = Reportinator.report("test_user", {variables: {user: user}})
       output = [[PARAMS[:id], PARAMS[:first_name], PARAMS[:last_name]]]
       parsed_output = Reportinator::ReportParser.parse output
       expect(report).to eq(parsed_output)

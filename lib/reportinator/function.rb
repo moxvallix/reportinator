@@ -1,18 +1,18 @@
 module Reportinator
   class Function < Base
     attribute :element
-    attribute :variables, default: {}
+    attribute :metadata, default: {}
 
-    def self.parse(element, variables = {})
-      new(element: element, variables: variables).get
+    def self.parse(element, metadata = {})
+      new(element: element, metadata: metadata).get
     end
 
     def parse_value(value)
-      ValueParser.parse(value, variables)
+      ValueParser.parse(value, metadata)
     end
 
     def parse_and_execute_value(target, value)
-      ValueParser.parse_and_execute(target, value, variables)
+      ValueParser.parse_and_execute(target, value, metadata)
     end
 
     def prefixes

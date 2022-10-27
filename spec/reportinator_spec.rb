@@ -18,7 +18,7 @@ TYPES = [
   {input: "@false", output: false, type: "logical false"},
   {input: "@nil", output: nil, type: "logical nil"},
   {input: "@null", output: nil, type: "logical nil (null input)"},
-  {input: "$test", output: "test output", type: "variable", variables: {test: "test output"}},
+  {input: "$test", output: "test output", type: "variable", variables: {variables: {test: "test output"}}},
   {input: ["#&Date", ":today"], output: Date.today, type: "method"},
   {input: ["#", "&Date", ":today"], output: Date.today, type: "method (prefix separate)"},
   {input: [">join ", "a", "b", "c"], output: "a b c", type: "helper (join)"},
@@ -38,7 +38,6 @@ INVALID_REPORTS = [
   {template: "invalid/test_missing", error: "Missing template"},
   {template: "invalid/test_001", error: "Invalid type: missing"},
   {template: "invalid/test_002", error: "Missing template"},
-  {template: "invalid/test_003", error: "Invalid type: "},
   {template: "invalid/test_004", error: "Error parsing template file"}
 ]
 
@@ -51,14 +50,14 @@ end
 
 def generates_report_test(template, output)
   it "generates report: #{template}" do
-    report = Reportinator::Loader.data_from_template(template)
+    report = Reportinator.report(template)
     expect(report).to eq(output)
   end
 end
 
 def invalid_report_test(template, error)
   it "raises error on: #{template}" do
-    expect { Reportinator::Loader.data_from_template(template) }.to raise_error(/#{error}/)
+    expect { Reportinator.report(template) }.to raise_error(/#{error}/)
   end
 end
 

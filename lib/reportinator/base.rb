@@ -2,8 +2,9 @@ module Reportinator
   class Base
     include ActiveModel::API
     include ActiveModel::Attributes
-
     require_rel "."
+
+    include Helpers
 
     def self.config
       Reportinator.config
