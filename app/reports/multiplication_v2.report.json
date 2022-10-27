@@ -1,0 +1,15 @@
+[
+  {
+    "type": ":preset",
+    "params": {
+      "values": ["5x5","nx1","nx2","nx3","nx4","nx5"]   
+    }
+  },
+  {
+    "type": ":model",
+    "params": {
+      "target": "!rn 1,5",
+      "method_list": [[">join", "x", "$target", "n"],{"*": 1},{"*": 2},{"*": 3},{"*": 4},{"*": 5}]
+    }
+  }
+]

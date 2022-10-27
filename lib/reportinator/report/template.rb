@@ -1,5 +1,6 @@
 module Reportinator
   class Template < Base
+    attr_accessor :children
     attribute :type
     attribute :template
     attribute :params
@@ -8,41 +9,58 @@ module Reportinator
     def self.load(params = {})
       template = new(params)
       output = template.register
-      return output.flatten if output.respond_to? :to_ary
-      [output]
+      output
     end
 
     def register
       return load_template if template.present?
       self
     end
-    
-    def load_template
-      template_data = merge_template
-      if template_data.respond_to? :to_ary
-        template_data.map { |template| self.class.load(template) }
-      else
-        self.class.load(template_data)
-      end
-    end
 
-    def merge_template
-      template_data = parse_template
-      if template_data.respond_to? :to_ary
-        template_data.map { |data| merge_with_attributes(data) }
+    def parse(meta = {}, data = {})
+      output = []
+      new_meta = metadata
+      combine_meta = merge_hash(meta, new_meta)
+      new_data = attributes.transform_keys { |key| key.to_sym }
+      combine_data = merge_hash(new_data, data)
+      if children.present? && children.respond_to?(:to_ary)
+        children.each do |child|
+          output += child.parse(combine_meta, combine_data) do |combine_data, meta, new_meta|
+            yield(combine_data, meta, new_meta)
+          end
+        end
       else
-        merge_with_attributes(template_data)
+        output << yield(combine_data, meta, new_meta)
       end
-    end
-
-    def merge_with_attributes(new_data)
-      new_data = filter_params(new_data)
-      current_data = attributes.transform_keys { |key| key.to_sym }
-      current_data.delete(:template)
-      merge_hash(new_data, current_data)
+      output
     end
 
     private
+    
+    def load_template
+      template_data = filter_template
+      if template_data.respond_to? :to_ary
+        data = template_data.map { |template| self.class.load(template) }
+      else
+        data = self.class.load(template_data)
+      end
+      self.children ||= []
+      if data.respond_to? :to_ary
+        self.children += data
+      else
+        self.children << data
+      end
+      self
+    end
+
+    def filter_template
+      template_data = parse_template
+      if template_data.respond_to? :to_ary
+        template_data.map { |template| filter_params(template) }
+      else
+        filter_params(template_data)
+      end
+    end
 
     def find_template
       raise "Template isn't a string" unless template.instance_of? String

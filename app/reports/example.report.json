@@ -1,7 +1,11 @@
 [
   {
     "type": ":preset",
-    "variables": {"variable": "i am a variable"},
+    "metadata": {
+      "variables": {
+        "variable": "i am a variable"
+      }
+    },
     "params": {
       "values": [
         "string", ":symbol", "&Reportinator",

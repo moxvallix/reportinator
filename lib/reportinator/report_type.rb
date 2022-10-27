@@ -1,7 +1,8 @@
 module Reportinator
   class ReportType < Base
     PARSE_PARAMS = true
-
+    
+    attr_accessor :metadata
     attribute :title
 
     def self.generate(params)

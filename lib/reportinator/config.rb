@@ -9,6 +9,7 @@ module Reportinator
     DEFAULT_FUNCTIONS = [
       "Reportinator::HelperArrayFunction",
       "Reportinator::JoinArrayFunction",
+      "Reportinator::FlattenArrayFunction",
       "Reportinator::MethodArrayFunction",
       "Reportinator::AdditionStringFunction",
       "Reportinator::ConstantStringFunction",

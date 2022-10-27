@@ -1,9 +1,7 @@
 module Reportinator
   class ModelReport < ReportType
     include Helpers
-
     PARSE_PARAMS = false
-    attr_accessor :metadata
     attribute :target
     attribute :method_list, default: []
 
@@ -11,7 +9,7 @@ module Reportinator
 
     def data
       self.target = ValueParser.parse(target, metadata)
-      return Row.create(get_model_data(target)) unless target.respond_to? :to_ary
+      return Row.create(get_model_data(target)) unless target.respond_to? :each
       records_data.map { |data| Row.create(data) }
     end
 
@@ -31,9 +29,7 @@ module Reportinator
     end
 
     def parse_method(target, method)
-      puts "input: #{method}"
-      parser_metadata = (metadata.present? ? metadata : {})
-      parser_metadata = merge_hash(parser_metadata, {variables: {target: target}})
+      parser_metadata = merge_hash(metadata, {variables: {target: target}})
       parsed_method = ValueParser.parse(method, parser_metadata)
       return parsed_method if parsed_method.instance_of? String
       MethodParser.parse(target, parsed_method)
