@@ -41,12 +41,12 @@ module Reportinator
     filename = (filename.present? ? filename : "#{template}.csv")
     path = "#{config.output_directory}/#{filename}"
     FileUtils.mkdir_p(File.dirname(path))
-    data = report(template, metadata)
-    CSV.open(path, "wb") do |csv|
-      data.each do |row|
-        csv << row
-      end
+    report = ReportLoader.load(template, metadata).report
+    data = report.to_csv
+    if File.write(path, data)
+      path
+    else
+      raise "Error writing to: #{path}"
     end
-    path
   end
 end

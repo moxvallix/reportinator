@@ -23,5 +23,11 @@ module Reportinator
     def output
       rows.map { |r| r.output }
     end
+
+    def to_csv
+      CSV.generate do |csv|
+        output.each { |row| csv << row }
+      end
+    end
   end
 end
