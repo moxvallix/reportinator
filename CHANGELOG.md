@@ -1,4 +1,9 @@
 ## [Unreleased]
+- Refactor loader to be report loader
+- Add template object
+- Report types can opt in to parsing the data themselves
+- Added ">string" array function
+
 ## [0.1.0] - 2022-10-06
 - Initial release
 
