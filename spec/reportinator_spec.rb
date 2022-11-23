@@ -24,7 +24,8 @@ TYPES = [
   {input: [">join ", "a", "b", "c"], output: "a b c", type: "helper (join)"},
   {input: [">strf !d 1970-01-01", "%b, %Y"], output: "Jan, 1970", type: "helper (strf)"},
   {input: [">offset !d 1970-01-01", 1, ":year", ":start"], output: Time.parse("1971-01-01"), type: "helper (offset)"},
-  {input: [">title", "hello", "world"], output: "Hello World", type: "helper (title)"}
+  {input: [">title", "hello", "world"], output: "Hello World", type: "helper (title)"},
+  {input: [">range", 1, 10], output: (1..10), type: "range (array)"}
 ]
 
 REPORTS = [
