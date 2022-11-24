@@ -5,6 +5,8 @@ TYPES = [
   {input: "&Reportinator", output: Reportinator, type: "constant"},
   {input: "!n 100", output: 100, type: "integer number"},
   {input: "!n 100.0", output: 100.0, type: "float number"},
+  {input: "!nf 100", output: 100.0, type: "number to float"},
+  {input: "!ni 100.0", output: 100, type: "number to integer"},
   {input: "!a 50, 50", output: 100, type: "addition"},
   {input: "!d 1970-01-01", output: Time.parse("1970-01-01"), type: "date"},
   {input: "!rn 1, 100", output: (1..100), type: "number range"},
@@ -32,7 +34,8 @@ REPORTS = [
   {template: "standard/test_001", output: [["string", :symbol]]},
   {template: "standard/test_002", output: [["Jan, 1970"]]},
   {template: "standard/test_003", output: [["a", "b", "c"], ["1", "2", "3"]]},
-  {template: "standard/test_004", output: [["a", "b", "c"], ["1", "2", "3"]]}
+  {template: "standard/test_004", output: [["a", "b", "c"], ["1", "2", "3"]]},
+  {template: "standard/test_005", output: [[15]]}
 ]
 
 INVALID_REPORTS = [
