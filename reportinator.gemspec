@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "activemodel", "~> 7.0"
   spec.add_dependency "require_all", "~> 3.0"
+  spec.add_dependency "json_schemer", "~> 0.2"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
