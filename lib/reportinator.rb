@@ -11,7 +11,7 @@ require_relative "reportinator/version"
 require_relative "reportinator/base"
 
 module Reportinator
-  SCHEMA = "data/schema/report_schema.json"
+  SCHEMA = "#{__dir__}/../data/schema/report_schema.json"
   class Error < StandardError; end
   class << self
     attr_writer :config
