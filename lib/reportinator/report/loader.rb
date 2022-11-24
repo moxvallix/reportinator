@@ -21,16 +21,28 @@ module Reportinator
     def report
       report = Report.new
       reports = template.parse(metadata) do |data, old_meta, new_meta|
-        meta = ValueParser.parse(old_meta, metadata)
-        parsed_meta = ValueParser.parse(new_meta, meta)
-        report_meta = merge_hash(parsed_meta, meta)
-        report_from_data(data, report_meta)
+        parse_metadata(data, old_meta, new_meta)
       end
       reports.compact.each do |report_template|
         output = report_template.data
         report.insert(output)
       end
       report
+    end
+
+    def parse_metadata(data, old_meta, new_meta)
+      meta = ValueParser.parse(old_meta, metadata)
+      if new_meta.instance_of? Hash
+        unparsed_meta = new_meta.select { |key| config.configured_metadata.include? key }
+        meta_to_parse = new_meta.reject { |key| config.configured_metadata.include? key }
+        parsing_meta = merge_hash(meta, unparsed_meta)
+        parsed_meta = ValueParser.parse(meta_to_parse, parsing_meta)
+        remerged_meta = merge_hash(parsed_meta, unparsed_meta)
+      else
+        remerged_meta = {}
+      end
+      report_meta = merge_hash(remerged_meta, meta)
+      report_from_data(data, report_meta)
     end
 
     private

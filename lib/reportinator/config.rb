@@ -11,6 +11,7 @@ module Reportinator
       "Reportinator::JoinArrayFunction",
       "Reportinator::RangeArrayFunction",
       "Reportinator::StringArrayFunction",
+      "Reportinator::SnippetArrayFunction",
       "Reportinator::FlattenArrayFunction",
       "Reportinator::MethodArrayFunction",
       "Reportinator::AdditionStringFunction",
@@ -23,11 +24,13 @@ module Reportinator
       "Reportinator::SymbolStringFunction",
       "Reportinator::VariableStringFunction"
     ]
+    DEFAULT_UNPARSEDS = [:snippets]
 
     attribute :report_directories, default: []
     attribute :report_suffixes, default: []
     attribute :report_types, default: {}
     attribute :parser_functions, default: []
+    attribute :unparsed_metadata, default: []
     attribute :output_directory, default: "reports"
 
     def configured_directories
@@ -46,6 +49,10 @@ module Reportinator
     def configured_functions
       functions = DEFAULT_FUNCTIONS + parser_functions
       functions.map { |function| function.constantize }
+    end
+
+    def configured_metadata
+      DEFAULT_UNPARSEDS + unparsed_metadata
     end
   end
 end

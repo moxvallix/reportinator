@@ -6,15 +6,13 @@ module Reportinator
     def self.parse(element, metadata = {})
       metadata = metadata.present? ? metadata : {}
       new(element: element.dup, metadata: metadata).output
-    rescue
+    rescue => e
+      logger.error "[ERROR] #{e.class}: #{e}"
       "Parsing Error"
     end
 
     def self.parse_and_execute(target, values, metadata = {})
-      parsed_target = target
-      if target.instance_of?(String)
-        parsed_target = parse(target, metadata)
-      end
+      parsed_target = parse(target, metadata)
       parsed_values = parse(values, metadata)
       MethodParser.parse(parsed_target, parsed_values)
     end

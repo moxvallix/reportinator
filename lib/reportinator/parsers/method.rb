@@ -5,7 +5,8 @@ module Reportinator
 
     def self.parse(target, method)
       new(target: target, method: method).output
-    rescue
+    rescue => e
+      logger.error "[ERROR] #{e.class}: #{e}"
       "Method Error"
     end
 

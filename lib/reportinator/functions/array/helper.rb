@@ -1,6 +1,6 @@
 module Reportinator
   class HelperArrayFunction < ArrayFunction
-    PREFIXES = [">strf", ">offset", ">title"]
+    PREFIXES = [">strf", ">offset", ">title", ">sum"]
 
     INTERVALS = {
       days: {start: "at_beginning_of_day", end: "at_end_of_day"},
@@ -15,6 +15,7 @@ module Reportinator
       return parse_strftime if prefix == ">strf"
       return parse_offset if prefix == ">offset"
       return parse_title if prefix == ">title"
+      return parse_sum if prefix == ">sum"
       element
     end
 
@@ -53,6 +54,11 @@ module Reportinator
     def parse_title
       to_join = [parsed_target] + parsed_values
       to_join.join(" ").titleize
+    end
+
+    def parse_sum
+      sum_values = parsed_values.append parsed_target
+      sum_values.sum { |value| parse_value("!n #{value}") }
     end
 
     def parsed_target
