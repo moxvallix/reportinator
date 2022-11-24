@@ -6,14 +6,17 @@ require "fileutils"
 require "active_support"
 require "active_model"
 require "require_all"
+require "json_schemer"
 require_relative "reportinator/version"
 require_relative "reportinator/base"
 
 module Reportinator
+  SCHEMA = "data/schema/report_schema.json"
   class Error < StandardError; end
   class << self
     attr_writer :config
     attr_writer :logger
+    attr_writer :schema
   end
 
   def self.config
@@ -22,6 +25,12 @@ module Reportinator
 
   def self.configure
     yield(config)
+  end
+
+  def self.schema
+    return @schema if @schema.instance_of? JSONSchemer
+    schema = JSON.parse(File.read(SCHEMA))
+    @schema = JSONSchemer.schema(schema)
   end
 
   def self.logger

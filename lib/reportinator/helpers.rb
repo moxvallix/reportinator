@@ -1,6 +1,5 @@
 module Reportinator
   module Helpers
-
     def merge_hash(target, source)
       target = target.present? ? target : {}
       source = source.present? ? source : {}
@@ -26,6 +25,5 @@ module Reportinator
       raise "Invalid attributes" unless target.attributes.instance_of? Hash
       target.attributes.transform_keys { |key| key.to_sym }
     end
-
   end
 end

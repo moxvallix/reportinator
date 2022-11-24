@@ -42,7 +42,8 @@ INVALID_REPORTS = [
   {template: "invalid/test_missing", error: "Missing template"},
   {template: "invalid/test_001", error: "Invalid type: missing"},
   {template: "invalid/test_002", error: "Missing template"},
-  {template: "invalid/test_004", error: "Error parsing template file"}
+  {template: "invalid/test_004", error: "Error parsing template file"},
+  {template: "invalid/test_005", error: "Template doesn't match schema"}
 ]
 
 def parses_type_test(type, input, output, variables)

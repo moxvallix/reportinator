@@ -50,19 +50,33 @@ A Report template has four attributes:
 | key       | type   | description                                        |
 |-----------|--------|----------------------------------------------------|
 | type      | symbol | specifies the report type to use                   |
-| variables | hash   | defines variables to be used with the `$` function |
 | template  | string | references another template to load and merge with |
+| metadata  | hash   | values accessible to parser functions              |
 | params    | hash   | report specific parameters                         |
 
-#### Reportinator String Function Cheatsheet
+Values in report templates are passed through the value parser.
+There are two main types of functions that can be parsed. String functions, and
+array functions.
+
+String functions return a value based on the contents of a string input.
+They are useful for quick conversions, and simple functions.
+
+Array functions return a value based on the contents of an array.
+They are used for more complex functions, as more can be expressed with them.
+The values in an array function are usually also parsed, although it is at the discretion
+of the function do so.
+
+#### String Function Cheatsheet
 | prefix  | example                     | output                                     |
 |---------|-----------------------------|--------------------------------------------|
 | `:`     | ":symbol"                   | :symbol                                    |
 | `&`     | "&Constant"                 | Constant                                   |
-| `$`     | "$variable"                 | Value of key `variable` in variables hash. |
+| `$`     | "$variable"                 | Value `variable` in variables metadata.    |
 | `!a`    | "!a 1,2,3"                  | 6                                          |
 | `!d`    | "!d 1970-01-01"             | 1970-01-01 00:00:00                        |
 | `!n`    | "!n 100"                    | 100                                        |
+| `!ni`   | "!ni 103.34"                | 103                                        |
+| `!nf`   | "!nf 103"                   | 103.0                                      |
 | `!j`    | "!j 1,2,3"                  | "123"                                      |
 | `!r`    | "!r a,z"                    | ("a".."z")                                 |
 | `!rd`   | "!rd 1970-01-01,1979-01-01" | (1970-01-01 00:00:00..1979-01-01 00:00:00) |
@@ -72,7 +86,7 @@ A Report template has four attributes:
 | `@nil`  | "@nil"                      | nil                                        |
 | `@null` | "@null"                     | nil                                        |
 
-#### Reportinator Array Function Cheatsheet
+#### Array Function Cheatsheet
 When an array has a string as it's first value, and that string has a certain prefix,
 the given array is parsed as an Array Function.
 
@@ -107,13 +121,76 @@ to be more flexible, as it no longer has to be resolved from a string.
 ```
 This array is equally valid, and still returns the same result.
 
- prefix    | example                                        | ruby equivalent                         |
------------|------------------------------------------------|-----------------------------------------|
- `#`       | `["#&Date", ":today"]`                         | Date.today                              |
- `>join`   | `[">join", " - ", "a", "b", "c"]`              | ["a", "b", "c"].join(" - ")             |
- `>strf`   | `[">strf", ["#&Date", ":today"], "%b, %Y"]`    | Date.today.strftime("%b, %Y")           |
- `>offset` | `[">offset $time", 2, ":month", ":end"]`       | $time.advance(month: 2).at_end_of_month |
- `>title`  | `[">title", "hello", "world"]`                 | ["hello", "world"].join(" ").titleize   |
+| prefix    | example                                        | ruby equivalent                         |
+|-----------|------------------------------------------------|-----------------------------------------|
+| `#`       | `["#&Date", ":today"]`                         | Date.today                              |
+| `>join`   | `[">join", " - ", "a", "b", "c"]`              | ["a", "b", "c"].join(" - ")             |
+| `>strf`   | `[">strf", ["#&Date", ":today"], "%b, %Y"]`    | Date.today.strftime("%b, %Y")           |
+| `>offset` | `[">offset $time", 2, ":month", ":end"]`       | $time.advance(month: 2).at_end_of_month |
+| `>title`  | `[">title", "hello", "world"]`                 | ["hello", "world"].join(" ").titleize   |
+| `>snippet`| `[">snippet :test", {"var1": "hi"}]`           | *See snippets section*                  |
+
+
+### Metadata
+Metadata is defined in the "metadata" field of the template, and can be used by Parser Functions.
+Metadata is merged from parent to child report template. Child metadata takes precedence over parent.
+
+Reportinator's built in Parser Functions use two metadata fields; "variables", and "snippets".
+
+#### Variables
+Variables are values that can be accessed with the "$" string function.
+
+```
+"metadata": {
+  "variables": {
+    "key": "value"
+  }
+}
+```
+```
+> Reportinator.parse "$key"
+=> "value"
+```
+
+Variable values are also parsed, and themselves can even reference variables from parent templates.
+
+```
+# $date = 1970-01-01
+"metadata": {
+  "variables": {
+    "formatted_date": [">strf", "$date", "%b %d, %Y"]
+  }
+}
+```
+```
+> Reportinator.parse "$formatted_date"
+=> "Jan 01, 1970"
+```
+
+#### Snippets
+Snippets are values that are not parsed until called from the ">snippet" array function,
+as opposed to variables, which are parsed before they are able to be called.
+
+Snippets can be passed variables with a hash in the first value of the array function.
+
+Example:
+```
+"metadata": {
+  "snippets": {
+    "plus_10": [">sum", "$var", 10]
+  }
+}
+```
+```
+> Reportinator.parse [">snippet :plus_10", { "var": 5 }]
+=> 15
+```
+
+Snippets help to reduce repetition of complex functionality in a report.
+However, if a report is getting unwieldy with complex values to parse, it might
+be a good idea to write a Custom Parser Function, or to write it into a method
+on a class, and call it from a "&Constant". See the next section for setting up
+custom functions.
 
 ### Configuring Reportinator
 ```
@@ -137,17 +214,26 @@ of the reports.
 The requirements to make a Report are very simple.
 1. The report must inherit from `Reportinator::Report`
 2. The report should provide some attributes, to be set with the "params" field,
-3. The report must provide a `data` method, which returns a one or two dimensional array,
-manipulating the "params" in some way.
+3. The report must provide a `data` method, which returns either a Reportinator::Row,
+or an array of them.
 
-For example, this is the entire code for the Preset Report:
+Here's an example of a basic report type:
 ```
-module Reportinator
-    class PresetReport < Report
-        attribute :data, default: []
-    end
+class BasicReport < Reportinator::Report
+  attribute :values, default: []
+
+  def data
+    Reportinator::Row.create(values)
+  end
 end
 ```
+
+`Reportinator::Row.create` takes in an array, and turns it into a Row.
+For more fine-grained control, an instance of a Row can have data
+inserted into it with the `insert` method. `insert` takes any data, then
+a position, being either :first, :last, or an index number, to indicate where in
+the row the data should be inserted.
+
 Once a report has been written, it must be registed as a report type.
 See the configuration section for more details.
 
@@ -158,11 +244,13 @@ or "Reportinator::ArrayFunction"
 2. The function must have a PREFIXES constant, with an array of the prefixes it'll accept.
 3. The function must provide an `output` method
 
-String functions gain access to two variables:
+All functions have access to the `metadata` variable.
+
+String functions gain access to two additional variables:
 - `prefix`, the prefix that the string used
 - `body`, the rest of the string with the prefix removed
 
-Array functions gain access to three variables:
+Array functions gain access to three additional variables:
 - `prefix`, the prefix that was used
 - `target`, the first value after the prefix
 - `values`, the rest of the values, with the target removed

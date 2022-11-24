@@ -16,7 +16,10 @@ module Reportinator
     end
 
     OUTPUT_TYPES.each do |type, classes|
-      define_method(:"#{type}?") { classes.each { |c| return true if output.is_a? c }; false }
+      define_method(:"#{type}?") {
+        classes.each { |c| return true if output.is_a? c }
+        false
+      }
     end
   end
 end

@@ -8,8 +8,7 @@ module Reportinator
 
     def self.load(params = {})
       template = new(params)
-      output = template.register
-      output
+      template.register
     end
 
     def register
@@ -36,13 +35,13 @@ module Reportinator
     end
 
     private
-    
+
     def load_template
       template_data = filter_template
-      if template_data.respond_to? :to_ary
-        data = template_data.map { |template| self.class.load(template) }
+      data = if template_data.respond_to? :to_ary
+        template_data.map { |template| self.class.load(template) }
       else
-        data = self.class.load(template_data)
+        self.class.load(template_data)
       end
       self.children ||= []
       if data.respond_to? :to_ary
@@ -75,14 +74,26 @@ module Reportinator
       raise "Missing template: #{template}"
     end
 
+    def validate_template(json)
+      return true if Reportinator.schema.valid?(json)
+      raise "Template doesn't match schema: #{Reportinator.schema.validate(json).to_a}"
+    end
+
     def parse_template
-      file = find_template
+      file = read_template
       begin
-        json = File.read(file)
-        JSON.parse(json, symbolize_names: true)
+        plain_json = JSON.parse(file)
+        symbolised_json = JSON.parse(file, symbolize_names: true)
       rescue
         raise "Error parsing template file: #{file}"
       end
+      validate_template(plain_json)
+      symbolised_json
+    end
+
+    def read_template
+      file = find_template
+      File.read(file)
     end
 
     def filter_params(params)
