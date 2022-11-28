@@ -8,7 +8,7 @@ module Reportinator
     validates :target, presence: true
 
     def data
-      self.target = ValueParser.parse(target, metadata)
+      self.target = ValueParser.parse(target, metadata, false)
       return Row.create(get_model_data(target)) unless target.respond_to? :each
       records_data.map { |data| Row.create(data) }
     end

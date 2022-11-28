@@ -48,15 +48,15 @@ module Reportinator
     private
 
     def send_value(target, method, value = nil)
-      method = method.to_s
       return nil unless target_has_method?(target, method)
+      method = method.to_s
       return target.send(method) unless value.present?
       return target.send(method, *value) if value.instance_of?(Array)
       target.send(method, value)
     end
 
     def target_has_method?(target, method)
-      target.methods.include?(method.to_sym)
+      target.respond_to?(method)
     end
 
     def parse_method(target, method)

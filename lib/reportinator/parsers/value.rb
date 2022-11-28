@@ -1,18 +1,21 @@
 module Reportinator
   class ValueParser < Parser
+    DUP_CLASSES = [String, Hash, Array]
+    
     attribute :element
     attribute :metadata, default: {}
 
-    def self.parse(element, metadata = {})
+    def self.parse(element, metadata = {}, dup = true)
       metadata = metadata.present? ? metadata : {}
-      new(element: element.dup, metadata: metadata).output
+      input_element = (dup ? element.dup : element)
+      new(element: input_element, metadata: metadata).output
     rescue => e
       logger.error "[ERROR] #{e.class}: #{e}"
       "Parsing Error"
     end
 
     def self.parse_and_execute(target, values, metadata = {})
-      parsed_target = parse(target, metadata)
+      parsed_target = parse(target, metadata, false)
       parsed_values = parse(values, metadata)
       MethodParser.parse(parsed_target, parsed_values)
     end
