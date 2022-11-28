@@ -1,7 +1,5 @@
 module Reportinator
-  class ValueParser < Parser
-    DUP_CLASSES = [String, Hash, Array]
-    
+  class ValueParser < Parser    
     attribute :element
     attribute :metadata, default: {}
 
