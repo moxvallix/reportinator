@@ -1,10 +1,13 @@
 module Reportinator
-  class ValueParser < Parser    
+  class ValueParser < Parser
+    FORCE_DUP = [String, Hash, Array]
+
     attribute :element
     attribute :metadata, default: {}
 
     def self.parse(element, metadata = {}, dup = true)
       metadata = metadata.present? ? metadata : {}
+      dup = true if FORCE_DUP.include? element.class
       input_element = (dup ? element.dup : element)
       new(element: input_element, metadata: metadata).output
     rescue => e
