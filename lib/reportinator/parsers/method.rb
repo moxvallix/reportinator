@@ -7,6 +7,7 @@ module Reportinator
       new(target: target, method: method).output
     rescue => e
       logger.error "[ERROR] #{e.class}: #{e}"
+      logger.error "Parsing #{method} on #{target}"
       "Method Error"
     end
 

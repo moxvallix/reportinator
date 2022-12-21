@@ -1,8 +1,8 @@
 module Reportinator
   module Helpers
     def merge_hash(target, source)
-      target = target.present? ? target : {}
-      source = source.present? ? source : {}
+      target = (target.present? ? target : {})
+      source = (source.present? ? source : {})
       merge_hash!(target, source)
     end
 
@@ -12,7 +12,7 @@ module Reportinator
       target.merge(source) do |key, old_value, new_value|
         if old_value.instance_of?(Hash) && new_value.instance_of?(Hash)
           merge_hash!(old_value, new_value)
-        elsif new_value.present?
+        elsif !new_value.nil?
           new_value
         else
           old_value

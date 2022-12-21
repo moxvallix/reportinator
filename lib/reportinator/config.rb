@@ -14,6 +14,7 @@ module Reportinator
       "Reportinator::SnippetArrayFunction",
       "Reportinator::FlattenArrayFunction",
       "Reportinator::MethodArrayFunction",
+      "Reportinator::RepeatArrayFunction",
       "Reportinator::AdditionStringFunction",
       "Reportinator::ConstantStringFunction",
       "Reportinator::DateStringFunction",

@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    reportinator (0.2.0)
+    reportinator (0.3.4)
       activemodel (~> 7.0)
+      json_schemer (~> 0.2)
       require_all (~> 3.0)
 
 GEM
@@ -79,7 +80,6 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  json_schemer (~> 0.2)
   rake (~> 13.0)
   reportinator!
   rspec (~> 3.0)

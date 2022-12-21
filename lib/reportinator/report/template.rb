@@ -38,10 +38,10 @@ module Reportinator
 
     def load_template
       template_data = filter_template
-      data = if template_data.respond_to? :to_ary
-        template_data.map { |template| self.class.load(template) }
+      if template_data.respond_to? :to_ary
+        data = template_data.map { |template| self.class.load(template) }
       else
-        self.class.load(template_data)
+        data = self.class.load(template_data)
       end
       self.children ||= []
       if data.respond_to? :to_ary

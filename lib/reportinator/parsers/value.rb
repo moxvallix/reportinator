@@ -12,6 +12,7 @@ module Reportinator
       new(element: input_element, metadata: metadata).output
     rescue => e
       logger.error "[ERROR] #{e.class}: #{e}"
+      logger.error "Parsing #{element} with #{metadata} (#{dup})"
       "Parsing Error"
     end
 

@@ -12,7 +12,7 @@ module Reportinator
     def get_metadata
       report_metadata = {}
       template.parse(metadata) do |data, old_meta, new_meta|
-        meta = ValueParser.parse(new_meta, metadata)
+        meta = parse_metadata(data, old_meta, new_meta)
         report_metadata = merge_hash(meta, report_metadata) if meta.present?
       end
       report_metadata
@@ -21,7 +21,8 @@ module Reportinator
     def report
       report = Report.new
       reports = template.parse(metadata) do |data, old_meta, new_meta|
-        parse_metadata(data, old_meta, new_meta)
+        parsed_meta = parse_metadata(data, old_meta, new_meta)
+        report_from_data(data, parsed_meta)
       end
       reports.compact.each do |report_template|
         output = report_template.data
@@ -41,8 +42,7 @@ module Reportinator
       else
         remerged_meta = {}
       end
-      report_meta = merge_hash(remerged_meta, meta)
-      report_from_data(data, report_meta)
+      merge_hash(remerged_meta, meta)
     end
 
     private

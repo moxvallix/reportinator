@@ -7,12 +7,14 @@ module Reportinator
       new(element: element, metadata: metadata).get
     end
 
-    def parse_value(value)
-      ValueParser.parse(value, metadata)
+    def parse_value(value, meta = {})
+      parse_meta = merge_hash(metadata, meta)
+      ValueParser.parse(value, parse_meta)
     end
 
-    def parse_and_execute_value(target, value)
-      ValueParser.parse_and_execute(target, value, metadata)
+    def parse_and_execute_value(target, value, meta = {})
+      parse_meta = merge_hash(metadata, meta)
+      ValueParser.parse_and_execute(target, value, parse_meta)
     end
 
     def prefixes
